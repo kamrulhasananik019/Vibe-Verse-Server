@@ -32,20 +32,35 @@ async function run() {
         // Send a ping to confirm a successful connection
 
         const usersCollection = client.db('Vibe-Verse').collection("users");
+        const allPostCollection = client.db('Vibe-Verse').collection("allPost")
 
 
-// user post route
-app.post('/users',async(req,res)=>{
-    const user=req.body;
-    const query={email:user.email };
-    const existingUser=await usersCollection.findOne(query);
-    if(existingUser){
-        return res.send({ message: 'user already exists'})
-    }
-    const result = await usersCollection.insertOne(user);
-    res.send(result);
-})
 
+
+
+        // user post route
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const query = { email: user.email };
+            const existingUser = await usersCollection.findOne(query);
+            if (existingUser) {
+                return res.send({ message: 'user already exists' })
+            }
+            const result = await usersCollection.insertOne(user);
+            res.send(result);
+        })
+
+
+        app.post('/allpost', async (req, res) => {
+            const allpost = req.body;
+            const result = await allPostCollection.insertOne(allpost)
+            res.send(result)
+        })
+
+        app.get('/allpost',async(req,res)=>{
+            const result=await allPostCollection.find().toArray()
+            res.send(result)
+        })
 
         await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
